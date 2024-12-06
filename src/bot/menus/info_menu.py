@@ -3,9 +3,8 @@ import telebot
 
 
 class InfoMenu:
-    def __init__(self, bot):
+    def __init__(self, bot: telebot.TeleBot):
         self.bot = bot
-        
 
     def get_response(self, message: telebot.types.Message):
         self.bot.send_message(

@@ -7,7 +7,7 @@ from src.bot.menus.start_menu import StartMenu
 
 
 class Router:
-    def __init__(self, bot):
+    def __init__(self, bot: telebot.TeleBot):
         self.bot = bot
         self.routers_commands()
         self.routers_buttons()

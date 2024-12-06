@@ -6,7 +6,7 @@ from src.core.messages.messages_manager import MessagesManager_Json
 
 
 class StartMenu(BaseMenu):
-    def __init__(self, bot):
+    def __init__(self, bot: telebot.TeleBot):
         self.bot = bot
 
     def get_response(self, message: telebot.types.Message):

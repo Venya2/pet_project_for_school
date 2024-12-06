@@ -1,8 +1,8 @@
 
 import telebot
-from core.config import settings
-from bot.routers import Router
 
+from src.core.config import settings
+from src.bot.routers import Router
 
 
 class Main:
@@ -16,4 +16,3 @@ class Main:
 
 if __name__ == "__main__":
     Main().start()
-    

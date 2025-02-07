@@ -1,0 +1,1 @@
+INSERT INTO timetable (class_num, class_letter, date, timetable) VALUES (?, ?, ?, ?)

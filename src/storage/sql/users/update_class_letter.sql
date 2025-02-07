@@ -1,0 +1,1 @@
+UPDATE user SET class_letter = ? WHERE id = ?

@@ -1,58 +1,68 @@
+
 import json  
 import sqlite3
-# import tables_requests
+
+from get_sql_method import DatabaseUtils
 from datetime import datetime
 from src.storage.database.core import CoreSQLite
-
+ 
 class Table_TimeTableSQLite:
     def __init__(self):
         self.db = CoreSQLite.get_connect()
 
+    def c_init(self, input_func):    
+        def output_func():
+            cursor = self.db.cursor()
+            input_func(cursor)
+            self.db.commit()
+            cursor.close()
+        return output_func
 
-    def create_table(self):
-        cursor = self.db.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS timetable (
-            id INTEGER PRIMARY KEY,
-            class_num INT,
-            class_letter TEXT,
-            date DATE,
-            timetable TEXT
-        )''')
-        self.db.commit()
-        cursor.close()
+    @c_init
+    def create_table(self, cursor) -> None :
+        cursor.executescript(
+            DatabaseUtils.get_sql_request(
+                'timetable',
+                'create_table'
+            )
+        )
 
-    def insert_timetable(self, class_num: int, class_letter: str, date: datetime, timetable: list[dict]):
-        cursor = self.db.cursor()
+    @c_init
+    def insert_timetable(
+        self,
+        cursor,
+        class_num: int,
+        class_letter: str,
+        date: datetime, 
+        timetable:list[dict]
+    ) -> None:
         json_data = json.dumps(timetable)
-        cursor.execute("INSERT INTO timetable (class_num, class_letter, date, timetable) VALUES (?, ?, ?, ?)",  
-               (class_num, class_letter, datetime.strftime(date, '%Y-%m-%d'), json_data))
-        self.db.commit()
-        cursor.close()
+        cursor.execute(
+            DatabaseUtils.get_sql_request(
+                'timetable',
+                'insert_timetable'
+            ),
+            (class_num,
+            class_letter,
+            datetime.strftime(date, '%Y-%m-%d'),
+            json_data
+            )
+        )
 
-    def get_by_id(self, id: int):
-        cursor = self.db.cursor()
-        cursor.execute(f"SELECT * FROM timetable WHERE id = {id}")
+    @c_init
+    def get_by_id(self, cursor, id: int):
+        cursor.execute(DatabaseUtils.get_sql_request(
+            'timetable', 'get_by_id'), (id))
         result = cursor.fetchone() 
         if result:  
             retrieved_lesson = json.loads(result[0])
-        cursor.close()
         return retrieved_lesson
 
-    def get_by_date(self, date: datetime):
-        cursor = self.db.cursor()
-        cursor.execute(f"SELECT * FROM timetable WHERE date = {date}")
+    @c_init
+    def get_by_date(self, cursor, date: datetime):
+        cursor.execute(DatabaseUtils.get_sql_request(
+            'timetable', 'get_by_date'), (date))
         result = cursor.fetchone() 
         if result:  
             retrieved_lesson = json.loads(result[0])
-        cursor.close()
         return retrieved_lesson
-    
-# Проверка
-# if __name__ == "__main__":
-#     Table_TimeTableSQLite().create_table()
-#     timestamp_str = '2024-12-20'  
-#     timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d')  
-#     Table_TimeTableSQLite().insert_timetable(10, "g", timestamp, ['GEAR'])
-
-# print(Table_TimeTableSQLite())
-# print(Table_TimeTableSQLite())
